@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FastAPI: Uvicorn",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "main:app",
+        "--reload",
+        "--port",
+        "8000"
+      ],
+      "jinja": true,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/server"
+      },
+      "cwd": "${workspaceFolder}/server"
+    },
+    {
+      "name": "Python: Hra (main.py)",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/game/main.py",
+      "cwd": "${workspaceFolder}/game",
+      "console": "integratedTerminal"
+    }
+  ]
+}
