@@ -4,9 +4,6 @@ __pycache__/
 # lokální databáze se skóre (vytvoří se sama při prvním spuštění serveru)
 server/scores.db
 
-# zvuky si hra vygeneruje sama při prvním spuštění
-game/assets/
-
 # pygbag build výstup (generuje se, viz README)
 game/build/
 

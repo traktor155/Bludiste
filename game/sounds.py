@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Zvuky si hra vyrobí sama do assets/sfx při prvním spuštění.
+"""Zvuky si hra vyrobí sama za běhu, přímo v paměti.
 
-Nemusíš tak nikde stahovat WAV soubory. Když chceš vlastní zvuky,
-prostě soubory v assets/sfx přepiš.
+Nemusíš tak nikde stahovat žádné soubory. Funguje to i v prohlížeči
+(pygbag/WASM), kde by zápis WAV souborů přes modul 'wave' nešel.
 """
 
 import math
-import os
 import struct
-import wave
 
 import pygame
 
 SR = 22050
-SFX_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "sfx")
 
 
 def _tone(freq, dur, vol=0.5, shape="sine"):
@@ -46,14 +43,10 @@ def _sweep(f0, f1, dur, vol=0.5, shape="sine"):
     return out
 
 
-def _save(path, samples):
-    with wave.open(path, "wb") as w:
-        w.setnchannels(1)
-        w.setsampwidth(2)
-        w.setframerate(SR)
-        frames = b"".join(struct.pack("<h", max(-32767, min(32767, int(s * 32767))))
-                          for s in samples)
-        w.writeframes(frames)
+def _pcm_bytes(samples):
+    """Převede vzorky (-1..1) na 16bit mono PCM, přesně jak to čeká mixer."""
+    return b"".join(struct.pack("<h", max(-32767, min(32767, int(s * 32767))))
+                    for s in samples)
 
 
 def _recipes():
@@ -69,25 +62,14 @@ def _recipes():
     }
 
 
-def ensure_files():
-    os.makedirs(SFX_DIR, exist_ok=True)
-    missing = {k: v for k, v in _recipes().items()
-               if not os.path.exists(os.path.join(SFX_DIR, k + ".wav"))}
-    for name, samples in missing.items():
-        _save(os.path.join(SFX_DIR, name + ".wav"), samples)
-
-
 class SoundBank:
     def __init__(self):
         self.enabled = False
         self.sfx = {}
         try:
             pygame.mixer.init(frequency=SR, size=-16, channels=1, buffer=512)
-            ensure_files()
-            for name in _recipes():
-                p = os.path.join(SFX_DIR, name + ".wav")
-                if os.path.exists(p):
-                    self.sfx[name] = pygame.mixer.Sound(p)
+            for name, samples in _recipes().items():
+                self.sfx[name] = pygame.mixer.Sound(buffer=_pcm_bytes(samples))
             self.enabled = True
         except Exception as e:      # bez zvukovky se hraje dál, jen mlčky
             print("Zvuk není dostupný:", e)

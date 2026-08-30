@@ -10,4 +10,3 @@ Bludišťová hra pro děti v Pythonu + Pygame, s leaderboardem na FastAPI + SQL
 - Bonusy: zrychlení, zmrazení příšerky, neviditelnost
 - Ovládání šipkami (nebo WASD), 3 srdíčka, žádné násilí – příšerka tě jen polechtá
 - Zvuky si hra vyrobí sama
-
