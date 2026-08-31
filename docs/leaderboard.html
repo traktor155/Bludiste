@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Únik před příšerkou – žebříček</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body{background:#121628;color:#eef2ff;font-family:system-ui,sans-serif;
+       display:flex;justify-content:center;padding:40px}
+  .card{background:#1c2240;padding:28px 40px;border-radius:16px;min-width:420px}
+  h1{color:#ffd166;margin:0 0 18px;font-size:26px}
+  table{width:100%;border-collapse:collapse;font-size:20px}
+  td{padding:8px 10px;border-bottom:1px solid #2a3255}
+  td:nth-child(3){text-align:right;color:#6ad68f;font-weight:700}
+  td:nth-child(4){text-align:right;color:#8b95bd}
+  .empty,.error{color:#8b95bd}
+  a{color:#5eaaff}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🏆 Nejlepší hráči</h1>
+  <div id="board"><p class="empty">Načítám…</p></div>
+  <p style="margin-top:24px"><a href="index.html">&larr; Zpátky do hry</a></p>
+</div>
+<script>
+const SUPABASE_URL = "https://qurenxljgnvdwrjqoxve.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
+  "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cmVueGxqZ252ZHdyanFveHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTc0NzQsImV4cCI6MjEwMzc3MzQ3NH0." +
+  "44Ai4vwRssS_XIC7fpPSfGe0zeqFHmGUq4tklPtKENM";
+
+const medals = ["🥇", "🥈", "🥉"];
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+async function load() {
+  const board = document.getElementById("board");
+  try {
+    const url = SUPABASE_URL + "/rest/v1/leaderboard_best"
+      + "?select=name,score,level,created_at&order=score.desc&limit=10";
+    const resp = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY } });
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const rows = await resp.json();
+    if (!rows.length) {
+      board.innerHTML = '<p class="empty">Zatím žádné skóre. Zahraj si!</p>';
+      return;
+    }
+    const items = rows.map((r, i) =>
+      `<tr><td>${i < 3 ? medals[i] : (i + 1) + "."}</td>`
+      + `<td>${esc(r.name)}</td><td>${r.score}</td><td>${r.level}</td></tr>`
+    ).join("");
+    board.innerHTML = `<table><tr><td></td><td>hráč</td><td>body</td><td>kolo</td></tr>${items}</table>`;
+  } catch (e) {
+    board.innerHTML = '<p class="error">Žebříček se nepodařilo načíst.</p>';
+  }
+}
+
+load();
+setInterval(load, 10000);
+</script>
+</body>
+</html>

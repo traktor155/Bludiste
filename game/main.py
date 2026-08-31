@@ -89,7 +89,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.rng = random.Random()
         self.sounds = SoundBank()
-        self.api = ApiClient(API_URL)
+        self.api = ApiClient()
         self.overlay = pygame.Surface((SCREEN_W, SCREEN_H), pygame.SRCALPHA)
 
         path = pygame.font.match_font("dejavusans,freesans,arial,liberationsans")

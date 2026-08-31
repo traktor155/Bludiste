@@ -6,8 +6,13 @@ HUD_H = 72
 PAD = 12
 FPS = 60
 
-# --- adresa leaderboard serveru ---
-API_URL = "http://127.0.0.1:8000"
+# --- Supabase (leaderboard) ---
+SUPABASE_URL = "https://qurenxljgnvdwrjqoxve.supabase.co"
+SUPABASE_ANON_KEY = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+    "eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF1cmVueGxqZ252ZHdyanFveHZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTc0NzQsImV4cCI6MjEwMzc3MzQ3NH0."
+    "44Ai4vwRssS_XIC7fpPSfGe0zeqFHmGUq4tklPtKENM"
+)
 
 # --- obtížnost ---
 LIVES = 3
