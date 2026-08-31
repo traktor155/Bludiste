@@ -336,7 +336,7 @@ class Game:
         pygame.draw.rect(self.screen, C_BLUE, box, 2, border_radius=10)
         caret = "|" if (self.frame // 30) % 2 == 0 else " "
         self.text((self.name or "") + caret, 30, C_TEXT, center=box.center)
-        self.text("ENTER = hrát     šipky = pohyb     L = žebříček     ESC = konec",
+        self.text("ENTER = hrát     šipky = pohyb     TAB = žebříček     ESC = konec",
                   20, C_DIM, center=(SCREEN_W // 2, 470))
         self.text("Chytí-li tě příšerka, jen tě polechtá a přijdeš o srdíčko.",
                   18, C_DIM, center=(SCREEN_W // 2, 520))
@@ -367,7 +367,7 @@ class Game:
                 self.name = self.name[:-1]
             elif e.key == pygame.K_ESCAPE:
                 return False
-            elif e.key == pygame.K_l:
+            elif e.key == pygame.K_TAB:
                 self.open_board()
             elif e.unicode and e.unicode.isprintable() and len(self.name) < 18:
                 self.name += e.unicode
