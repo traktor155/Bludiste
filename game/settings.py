@@ -16,14 +16,14 @@ SUPABASE_ANON_KEY = (
 
 # --- obtížnost ---
 LIVES = 3
-PLAYER_SPEED = 5.0          # buňky za sekundu
+PLAYER_SPEED = 5.1          # buňky za sekundu
 MONSTER_SPEED_BASE = 2.1    # v 1. kole
-MONSTER_SPEED_STEP = 0.28   # o kolik zrychlí každé kolo
+MONSTER_SPEED_STEP = 0.2   # o kolik zrychlí každé kolo
 MONSTER_SPEED_MAX = 4.4     # aby to zůstalo hratelné pro děti
 GRACE_SEC = 1.6             # po chycení příšerky chvíli stojí
 
-DARK_FROM_LEVEL = 4         # od kterého kola "zhasnou světla"
-DARK_RADIUS = 4.2           # v buňkách
+DARK_FROM_LEVEL = 6         # od kterého kola "zhasnou světla"
+DARK_RADIUS = 4.8           # v buňkách
 
 # rozměry bludiště (musí být lichá čísla)
 MAZE_MIN_COLS, MAZE_MIN_ROWS = 11, 9
@@ -62,6 +62,6 @@ MONSTERS = [
 
 # bonusy
 POWER_TYPES = ["speed", "freeze", "invis"]
-POWER_DURATION = {"speed": 6.0, "freeze": 4.0, "invis": 5.0}
+POWER_DURATION = {"speed": 6.3, "freeze": 4.0, "invis": 5.0}
 POWER_LABEL = {"speed": "Zrychlení!", "freeze": "Příšerka zmrzla!", "invis": "Neviditelnost!"}
 POWER_COLOR = {"speed": C_BLUE, "freeze": (150, 230, 255), "invis": C_PINK}
