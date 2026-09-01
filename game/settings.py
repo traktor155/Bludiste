@@ -17,9 +17,9 @@ SUPABASE_ANON_KEY = (
 # --- obtížnost ---
 LIVES = 3
 PLAYER_SPEED = 5.1          # buňky za sekundu
-MONSTER_SPEED_BASE = 2.1    # v 1. kole
+MONSTER_SPEED_BASE = 0.1    # v 1. kole
 MONSTER_SPEED_STEP = 0.2   # o kolik zrychlí každé kolo
-MONSTER_SPEED_MAX = 4.4     # aby to zůstalo hratelné pro děti
+MONSTER_SPEED_MAX = 0.4     # aby to zůstalo hratelné pro děti
 GRACE_SEC = 1.6             # po chycení příšerky chvíli stojí
 
 DARK_FROM_LEVEL = 6         # od kterého kola "zhasnou světla"
