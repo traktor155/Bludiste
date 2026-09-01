@@ -353,12 +353,17 @@ class Game:
         if not self.board_rows:
             self.text("Zatím tu nikdo není. Buď první!", 24, C_TEXT,
                       center=(SCREEN_W // 2, 300))
+        else:
+            self.text("jméno", 18, C_DIM, topleft=(350, 165))
+            self.text("body", 18, C_DIM, topleft=(600, 165))
+            self.text("kolo", 18, C_DIM, topleft=(750, 165))
         for i, row in enumerate(self.board_rows[:10]):
             y = 190 + i * 42
             col = C_ACCENT if i == 0 else C_TEXT
             self.text("%d." % (i + 1), 26, col, topleft=(300, y))
             self.text(str(row.get("name", "?"))[:18], 26, col, topleft=(350, y))
             self.text(str(row.get("score", 0)), 26, col, topleft=(600, y))
+            self.text(str(row.get("level", 1)), 26, col, topleft=(750, y))
         self.text("ESC = zpět", 20, C_DIM, center=(SCREEN_W // 2, SCREEN_H - 50))
 
     # ---------------- události ----------------
