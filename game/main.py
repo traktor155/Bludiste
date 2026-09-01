@@ -30,7 +30,11 @@ class Level:
         self.rng = rng
         self.cols = min(MAZE_MAX_COLS, MAZE_MIN_COLS + 2 * (number - 1))
         self.rows = min(MAZE_MAX_ROWS, MAZE_MIN_ROWS + 2 * (number - 1))
-        self.grid = generate_maze(self.cols, self.rows, extra_openings=2 + number, rng=rng)
+        # zkratky/smyčky ať rostou s plochou bludiště, ne jen s číslem kola –
+        # jinak je bludiště od vyšších kol (kdy se blíží maximální velikosti)
+        # relativně nejřidší a hráč se snáz zaklíní do slepé uličky s příšerkou
+        extra_openings = max(2 + number, (self.cols * self.rows) // 22)
+        self.grid = generate_maze(self.cols, self.rows, extra_openings=extra_openings, rng=rng)
         self.cols = len(self.grid[0])
         self.rows = len(self.grid)
         self.wall_color = WALL_PALETTE[(number - 1) % len(WALL_PALETTE)]
