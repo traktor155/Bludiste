@@ -25,7 +25,7 @@ MENU, PLAY, CAUGHT, LEVELUP, OVER, BOARD = range(6)
 class Level:
     """Jedno kolo: bludiště, předměty, příšerky."""
 
-    def __init__(self, number, rng):
+    def __init__(self, number, rng, monsters_enabled=True):
         self.number = number
         self.rng = rng
         self.cols = min(MAZE_MAX_COLS, MAZE_MIN_COLS + 2 * (number - 1))
@@ -67,14 +67,15 @@ class Level:
         for i in range(min(len(rest), 1 + number // 3)):
             self.items.append(Item(rest[i], "power_" + rng.choice(POWER_TYPES)))
 
-        # příšerky – vždy dost daleko od hráče
-        speed = min(MONSTER_SPEED_MAX, MONSTER_SPEED_BASE + MONSTER_SPEED_STEP * (number - 1))
-        spots = [c for c in cells if dist[c] >= 0.6 * far] or cells
-        rng.shuffle(spots)
+        # příšerky – vždy dost daleko od hráče (klidný režim = žádné)
         self.monsters = []
-        for i in range(min(len(spots), 4, 1 + (number - 1) // 3)):
-            kind, color = MONSTERS[(number - 1 + i) % len(MONSTERS)]
-            self.monsters.append(Monster(spots[i], speed, kind, color))
+        if monsters_enabled:
+            speed = min(MONSTER_SPEED_MAX, MONSTER_SPEED_BASE + MONSTER_SPEED_STEP * (number - 1))
+            spots = [c for c in cells if dist[c] >= 0.6 * far] or cells
+            rng.shuffle(spots)
+            for i in range(min(len(spots), 4, 1 + (number - 1) // 3)):
+                kind, color = MONSTERS[(number - 1 + i) % len(MONSTERS)]
+                self.monsters.append(Monster(spots[i], speed, kind, color))
         self.monster_home = [m.cell() for m in self.monsters]
 
     def coins_left(self):
@@ -108,6 +109,7 @@ class Game:
         self.msg_t = 0.0
         self.board_rows, self.board_online = [], False
         self.sent = None
+        self.monsters_enabled = True
         self.reset_run()
 
     # ---------------- pomůcky ----------------
@@ -147,7 +149,7 @@ class Game:
         self.state = PLAY
 
     def new_level(self):
-        self.level = Level(self.level_no, self.rng)
+        self.level = Level(self.level_no, self.rng, self.monsters_enabled)
         self.spawn_player()
         self.elapsed = 0.0
         self.power = {}
@@ -209,9 +211,10 @@ class Game:
                 return
 
         # příšerky
-        dist_map = distance_map(lv.grid, pcell)
-        for m in lv.monsters:
-            m.update_ai(dt, lv.grid, dist_map, self.rng)
+        if lv.monsters:
+            dist_map = distance_map(lv.grid, pcell)
+            for m in lv.monsters:
+                m.update_ai(dt, lv.grid, dist_map, self.rng)
 
         # chycení
         px, py = self.player.fpos()
@@ -340,10 +343,20 @@ class Game:
         pygame.draw.rect(self.screen, C_BLUE, box, 2, border_radius=10)
         caret = "|" if (self.frame // 30) % 2 == 0 else " "
         self.text((self.name or "") + caret, 30, C_TEXT, center=box.center)
-        self.text("ENTER = hrát     šipky = pohyb     TAB = žebříček     ESC = konec",
-                  20, C_DIM, center=(SCREEN_W // 2, 470))
-        self.text("Chytí-li tě příšerka, jen tě polechtá a přijdeš o srdíčko.",
-                  18, C_DIM, center=(SCREEN_W // 2, 520))
+
+        mode = "S příšerkami" if self.monsters_enabled else "Klidný režim (bez příšerek)"
+        mode_col = C_ACCENT if self.monsters_enabled else C_GREEN
+        self.text("< " + mode + " >", 22, mode_col, center=(SCREEN_W // 2, 430), bold=True)
+        self.text("šipky = přepnout režim", 16, C_DIM, center=(SCREEN_W // 2, 455))
+
+        self.text("ENTER = hrát     šipky ve hře = pohyb     TAB = žebříček     ESC = konec",
+                  20, C_DIM, center=(SCREEN_W // 2, 495))
+        if self.monsters_enabled:
+            self.text("Chytí-li tě příšerka, jen tě polechtá a přijdeš o srdíčko.",
+                      18, C_DIM, center=(SCREEN_W // 2, 535))
+        else:
+            self.text("Žádné příšerky – jen bludiště, mince a klíč k prozkoumání.",
+                      18, C_DIM, center=(SCREEN_W // 2, 535))
 
     def draw_board(self):
         self.screen.fill(C_BG)
@@ -378,6 +391,8 @@ class Game:
                 return False
             elif e.key == pygame.K_TAB:
                 self.open_board()
+            elif e.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                self.monsters_enabled = not self.monsters_enabled
             elif e.unicode and e.unicode.isprintable() and len(self.name) < 18:
                 self.name += e.unicode
         elif self.state == PLAY:
